@@ -22,7 +22,15 @@ HAL_StatusTypeDef I2C_PCF8591_init(uint8_t enableAnalogOutput, uint8_t inputMode
  * @param setValue The 8-bit value to be set on the DAC output.
  * @return HAL_StatusTypeDef Returns HAL_OK on success, or an error status on failure.
  */
-HAL_StatusTypeDef I2C_PCF8591_write_ain(uint8_t setValue);
+HAL_StatusTypeDef I2C_PCF8591_write_ain_raw(uint8_t setValue);
+/**
+ * @brief Write a value to the PCF8591 DAC.
+ *
+ * @param setValue The voltage value to be set on the DAC output.
+ * maximum is reference voltage
+ * @return HAL_StatusTypeDef Returns HAL_OK on success, or an error status on failure.
+ */
+HAL_StatusTypeDef I2C_PCF8591_write_ain(float setValue);
 
 /**
  * @brief Read raw ADC value from a specific channel of the PCF8591.

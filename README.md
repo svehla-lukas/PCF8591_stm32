@@ -18,7 +18,7 @@ The library is designed for easy integration with STM32 projects using STM32Cube
 
 3. DAC Output:
    - Write an 8-bit value to the DAC for analog output.
-
+   - Write an voltage value to the DAC for analog output.
 ## Files
 - I2C_PCF8591.h: Contains function declarations and macros.
 - I2C_PCF8591.c: Implements the library functions.
@@ -38,12 +38,22 @@ Parameters:
 Returns: HAL_OK on success, otherwise an error status.
 
 2. Writing to DAC
+a) Writing Raw Value to DAC
 ``` C
-HAL_StatusTypeDef I2C_PCF8591_write_ain(uint8_t setValue);
+HAL_StatusTypeDef I2C_PCF8591_write_ain_raw(uint8_t setValue);
 ```
 Description: Writes an 8-bit value to the DAC output.
 Parameters:
 - setValue: The value to output via the DAC.
+Returns: HAL_OK on success, otherwise an error status.
+
+b) Writing Voltage to DAC
+``` C
+HAL_StatusTypeDef I2C_PCF8591_write_ain(float setValue);
+```
+Description: Converts a voltage value to an 8-bit representation and writes it to the DAC output.
+Parameters:
+- setValue: The desired output voltage (float) to be written to the DAC.
 Returns: HAL_OK on success, otherwise an error status.
 
 3. Reading Raw ADC Values
