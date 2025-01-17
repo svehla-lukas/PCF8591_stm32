@@ -26,7 +26,10 @@ The library is designed for easy integration with STM32 projects using STM32Cube
 ## API Functions
 
 1. Initialization
+``` C
 HAL_StatusTypeDef I2C_PCF8591_init(uint8_t enableAnalogOutput, uint8_t inputMode, float referenceVoltage);
+```
+
 Description: Initializes the PCF8591 module.
 Parameters:
 - enableAnalogOutput: Set to 1 to enable DAC output, 0 to disable.
@@ -35,7 +38,9 @@ Parameters:
 Returns: HAL_OK on success, otherwise an error status.
 
 2. Writing to DAC
+``` C
 HAL_StatusTypeDef I2C_PCF8591_write_ain(uint8_t setValue);
+```
 Description: Writes an 8-bit value to the DAC output.
 Parameters:
 - setValue: The value to output via the DAC.
@@ -43,33 +48,43 @@ Returns: HAL_OK on success, otherwise an error status.
 
 3. Reading Raw ADC Values
 (a) Single Channel
+``` C
 uint8_t* I2C_PCF8591_read_raw_analog_ch(uint8_t channel);
+```
 Description: Reads the raw ADC value (8-bit) from a specific channel.
 Parameters:
 - channel: The ADC channel to read (0-3).
 Returns: Pointer to the raw ADC value, or NULL on failure.
 
 (b) All Channels
+``` C
 uint8_t* I2C_PCF8591_read_raw_analogs(void);
+```
 Description: Reads raw ADC values from all channels.
 Returns: Pointer to an array containing the raw ADC values, or NULL on failure.
 
 4. Reading Converted ADC Values
 (a) Single Channel
+``` C
 float* I2C_PCF8591_read_analog_ch(uint8_t channel);
+```
 Description: Reads the converted ADC value (as voltage) from a specific channel.
 Parameters:
 - channel: The ADC channel to read (0-3).
 Returns: Pointer to the converted value (in volts), or NULL on failure.
 
 (b) All Channels
+``` C
 float* I2C_PCF8591_read_analogs(void);
+```
 Description: Reads converted ADC values (as voltages) from all channels.
 Returns: Pointer to an array of converted values, or NULL on failure.
 
 ## Usage Example
 
 ### Initialization
+
+``` C
 #include "I2C_PCF8591.h"
 
 HAL_StatusTypeDef result;
@@ -77,9 +92,11 @@ result = I2C_PCF8591_init(1, 0, 3.3);
 if (result != HAL_OK) {
     // Handle initialization error
 }
+```
 
 
 ### Reading ADC Values
+``` C
 uint8_t* rawValue;
 float* voltageValue;
 
@@ -100,7 +117,7 @@ result = I2C_PCF8591_write_ain(128); // Output halfway DAC voltage
 if (result != HAL_OK) {
     // Handle DAC error
 }
-
+```
 ## Configuration
 
 Dependencies
