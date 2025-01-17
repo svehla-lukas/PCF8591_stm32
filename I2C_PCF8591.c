@@ -58,7 +58,7 @@ HAL_StatusTypeDef I2C_PCF8591_init(uint8_t enableAnalogOutput,
 }
 
 // Write to the DAC raw Value
-HAL_StatusTypeDef I2C_PCF8591_write_ain_raw(uint8_t setValue) {
+HAL_StatusTypeDef I2C_PCF8591_write_raw(uint8_t setValue) {
 	tx_data[0] |= 0x40; // Enable analog output
 	tx_data[1] = setValue;
 
@@ -68,7 +68,7 @@ HAL_StatusTypeDef I2C_PCF8591_write_ain_raw(uint8_t setValue) {
 }
 
 // Write to the DAC voltage
-HAL_StatusTypeDef I2C_PCF8591_write_ain(float setValue) {
+HAL_StatusTypeDef I2C_PCF8591_write(float setValue) {
 	tx_data[0] |= 0x40; // Enable analog output
 	setValue = setValue / ref_voltage * ADC_PCF_RESOLUTION;
 	tx_data[1] = (uint8_t)setValue;
@@ -79,7 +79,7 @@ HAL_StatusTypeDef I2C_PCF8591_write_ain(float setValue) {
 }
 
 // Read raw ADC value for a specific channel
-uint8_t* I2C_PCF8591_read_raw_analog_ch(uint8_t channel) {
+uint8_t* I2C_PCF8591_read_ch_raw(uint8_t channel) {
 	uint8_t rx_data[] = { 0x00, 0x00 };
 
 	if (channel > 3) {
@@ -106,7 +106,7 @@ uint8_t* I2C_PCF8591_read_raw_analog_ch(uint8_t channel) {
 }
 
 // Read raw ADC values for all channels
-uint8_t* I2C_PCF8591_read_raw_analogs(void) {
+uint8_t* I2C_PCF8591_read_raw(void) {
 	uint8_t rx_data[] = { 0x00, 0x00, 0x00, 0x00, 0x00 };
 	tx_data[0] &= ~TX_AUTO_INCREMENT_FLAG;
 
@@ -131,7 +131,7 @@ uint8_t* I2C_PCF8591_read_raw_analogs(void) {
 }
 
 // Read converted ADC value for a specific channel
-float* I2C_PCF8591_read_analog_ch(uint8_t channel) {
+float* I2C_PCF8591_read_ch(uint8_t channel) {
 	if (channel > 3) {
 		return NULL; // Invalid channel
 	}
@@ -152,12 +152,12 @@ float* I2C_PCF8591_read_analog_ch(uint8_t channel) {
 	}
 
 	raw_data[channel] = rx_data[1];
-	converted_data[channel] = ADC_CONVERT(raw_data[channel], ref_voltage);
+	converted_data[channel] = raw_data[channel] / ADC_PCF_RESOLUTION * ref_voltage;
 	return &converted_data[channel];
 }
 
 // Read converted ADC values for all channels
-float* I2C_PCF8591_read_analogs(void) {
+float* I2C_PCF8591_read(void) {
 	uint8_t rx_data[] = { 0x00, 0x00, 0x00, 0x00, 0x00 };
 	tx_data[0] &= ~TX_AUTO_INCREMENT_FLAG;
 

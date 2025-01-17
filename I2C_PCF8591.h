@@ -22,7 +22,7 @@ HAL_StatusTypeDef I2C_PCF8591_init(uint8_t enableAnalogOutput, uint8_t inputMode
  * @param setValue The 8-bit value to be set on the DAC output.
  * @return HAL_StatusTypeDef Returns HAL_OK on success, or an error status on failure.
  */
-HAL_StatusTypeDef I2C_PCF8591_write_ain_raw(uint8_t setValue);
+HAL_StatusTypeDef I2C_PCF8591_write_raw(uint8_t setValue);
 /**
  * @brief Write a value to the PCF8591 DAC.
  *
@@ -30,7 +30,7 @@ HAL_StatusTypeDef I2C_PCF8591_write_ain_raw(uint8_t setValue);
  * maximum is reference voltage
  * @return HAL_StatusTypeDef Returns HAL_OK on success, or an error status on failure.
  */
-HAL_StatusTypeDef I2C_PCF8591_write_ain(float setValue);
+HAL_StatusTypeDef I2C_PCF8591_write(float setValue);
 
 /**
  * @brief Read raw ADC value from a specific channel of the PCF8591.
@@ -38,14 +38,14 @@ HAL_StatusTypeDef I2C_PCF8591_write_ain(float setValue);
  * @param channel The ADC channel to read (0-3).
  * @return uint8_t* Pointer to the raw ADC value (8-bit), or NULL if an error occurs.
  */
-uint8_t* I2C_PCF8591_read_raw_analog_ch(uint8_t channel);
+uint8_t* I2C_PCF8591_read_ch_raw(uint8_t channel);
 
 /**
  * @brief Read raw ADC values from all channels of the PCF8591.
  *
  * @return uint8_t* Pointer to an array containing raw ADC values, or NULL if an error occurs.
  */
-uint8_t* I2C_PCF8591_read_raw_analogs(void);
+uint8_t* I2C_PCF8591_read_raw(void);
 
 /**
  * @brief Read a converted voltage value from a specific ADC channel.
@@ -53,13 +53,13 @@ uint8_t* I2C_PCF8591_read_raw_analogs(void);
  * @param channel The ADC channel to read (0-3).
  * @return float* Pointer to the converted voltage value, or NULL if an error occurs.
  */
-float* I2C_PCF8591_read_analog_ch(uint8_t channel);
+float* I2C_PCF8591_read_ch(uint8_t channel);
 
 /**
  * @brief Read converted voltage values from all ADC channels.
  *
  * @return float* Pointer to an array containing converted voltage values, or NULL if an error occurs.
  */
-float* I2C_PCF8591_read_analogs(void);
+float* I2C_PCF8591_read(void);
 
 #endif /* INC_I2C_PCF8591_H_ */
