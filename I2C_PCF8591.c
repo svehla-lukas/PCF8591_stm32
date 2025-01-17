@@ -12,13 +12,15 @@
 
 #include "stm32f1xx_hal.h"
 
-// Macros and definitions
+// Definitions
 #define TX_INPUT_MODE_MASK 0x70          // Mask for input mode bits
 #define TX_CHANNEL_MASK 0x07             // Mask for channel selection bits
 #define TX_AUTO_INCREMENT_FLAG 0x04      // Auto-increment flag
 #define TX_CHANNEL_NUMBER_MASK 0x30      // Channel number mask
 #define ADC_PCF_RESOLUTION 255           // ADC resolution
-
+// Macros
+#define ADC_CONVERT(voltage_value, ref_voltage) (((float)(voltage_value) / (float)(ref_voltage)) * (ADC_PCF_RESOLUTION))
+#define DAC_CONVERT(adc_value, ref_voltage) (((float)(adc_value) / (float)(ADC_PCF_RESOLUTION)) * (ref_voltage))
 
 // External I2C handler
 extern I2C_HandleTypeDef hi2c1;
@@ -40,7 +42,7 @@ HAL_StatusTypeDef I2C_PCF8591_init(uint8_t enableAnalogOutput,
 
 	// Check if the device is ready
 	result = HAL_I2C_IsDeviceReady(&hi2c1, PCF8591_address << 1, 1,
-			HAL_MAX_DELAY);
+	HAL_MAX_DELAY);
 	if (result != HAL_OK) {
 		return result;
 	}
@@ -70,8 +72,8 @@ HAL_StatusTypeDef I2C_PCF8591_write_raw(uint8_t setValue) {
 // Write to the DAC voltage
 HAL_StatusTypeDef I2C_PCF8591_write(float setValue) {
 	tx_data[0] |= 0x40; // Enable analog output
-	setValue = setValue / ref_voltage * ADC_PCF_RESOLUTION;
-	tx_data[1] = (uint8_t)setValue;
+	setValue = (setValue > ref_voltage) ? ref_voltage : setValue;
+	tx_data[1] = (uint8_t) ADC_CONVERT(setValue, ref_voltage);
 
 	result = HAL_I2C_Master_Transmit(&hi2c1, PCF8591_address << 1, tx_data,
 			sizeof(tx_data), HAL_MAX_DELAY);
@@ -101,7 +103,9 @@ uint8_t* I2C_PCF8591_read_ch_raw(uint8_t channel) {
 	}
 
 	raw_data[channel] = rx_data[1];
-	converted_data[channel] = (raw_data[channel] / ADC_PCF_RESOLUTION) * ref_voltage;
+	converted_data[channel] = (float) DAC_CONVERT(raw_data[channel],
+			ref_voltage);
+
 	return &raw_data[channel];
 }
 
@@ -124,7 +128,7 @@ uint8_t* I2C_PCF8591_read_raw(void) {
 
 	for (int i = 0; i < 4; i++) {
 		raw_data[i] = rx_data[i + 1];
-		converted_data[i] = ADC_CONVERT(raw_data[i], ref_voltage);
+		converted_data[i] = (uint8_t) DAC_CONVERT(raw_data[i], ref_voltage);
 	}
 
 	return raw_data;
@@ -152,7 +156,8 @@ float* I2C_PCF8591_read_ch(uint8_t channel) {
 	}
 
 	raw_data[channel] = rx_data[1];
-	converted_data[channel] = raw_data[channel] / ADC_PCF_RESOLUTION * ref_voltage;
+	converted_data[channel] = (float) DAC_CONVERT(raw_data[channel],
+			ref_voltage);
 	return &converted_data[channel];
 }
 
@@ -175,7 +180,7 @@ float* I2C_PCF8591_read(void) {
 
 	for (int i = 0; i < 4; i++) {
 		raw_data[i] = rx_data[i + 1];
-		converted_data[i] = ADC_CONVERT(raw_data[i], ref_voltage);
+		converted_data[i] = (float) DAC_CONVERT(raw_data[i], ref_voltage);
 	}
 
 	return converted_data;
